@@ -1,15 +1,19 @@
 package main
 
 import (
-	"github.com/AY88o/switchblade/internal/profile"
+	"fmt"
+	"os"
 )
 
 func main() {
 
-	school := profile.Profile{
-		Name: "STUDY MODE",
-		Apps: []string{"notepad", "calc"},
+	if len(os.Args) < 2 {
+
+		fmt.Println("Usage:")
+		fmt.Println("Switchblade Calibrate  ....(calibrate the tool)")
+		fmt.Println("OR")
+		fmt.Println("Switchblade Save <name>   ...(Save state)")
+
 	}
 
-	school.Start()
 }
