@@ -41,7 +41,7 @@ func LoadProfile(name string) ([]string, error) {
 
 	err = json.Unmarshal(data, &p)
 	if err != nil {
-		return nil, fmt.Errorf("file corrupted: %w", err2)
+		return nil, fmt.Errorf("file corrupted: %w", err)
 
 	}
 
