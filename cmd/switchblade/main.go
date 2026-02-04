@@ -46,4 +46,30 @@ func main() {
 
 	}
 
+	if command == "save" {
+		if len(os.Args) < 3 {
+			fmt.Println("Usage name:")
+			fmt.Println("Give the state a name:")
+			fmt.Println("switchblade save <name>")
+
+			return
+		}
+
+		profilname := os.Args[3]
+
+		mixList, err := sys.Capture()
+
+		if err != nil {
+			fmt.Printf("Error Capturing: %v\n", err)
+		}
+
+		Aprofile := profile.Profile{
+			Name: profilname,
+			Apps: mixList,
+		}
+
+		err = profile.SaveProfile(Aprofile)
+
+	}
+
 }
