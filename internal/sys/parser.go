@@ -54,3 +54,23 @@ func Capture() ([]string, error) {
 
 	return cleanList, nil
 }
+
+func Subtract(mixList []string, pureNoiseList []string) []string {
+
+	noiseMap := make(map[string]bool)
+
+	for _, app := range pureNoiseList {
+		noiseMap[app] = true
+	}
+
+	var cleanList []string
+
+	for _, app := range mixList {
+
+		if !noiseMap[app] {
+			cleanList = append(cleanList, app)
+		}
+	}
+
+	return cleanList
+}

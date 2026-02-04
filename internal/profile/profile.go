@@ -21,4 +21,3 @@ func (p Profile) Start() {
 		time.Sleep(500 * time.Millisecond)
 	}
 }
-

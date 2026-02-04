@@ -14,6 +14,8 @@ func main() {
 		fmt.Println("OR")
 		fmt.Println("Switchblade Save <name>   ...(Save state)")
 
+		return
+
 	}
 
 }
