@@ -1,0 +1,8 @@
+{
+ "Name": "test5",
+ "Apps": [
+  "explorer.exe",
+  "Code.exe",
+  "msedge.exe"
+ ]
+}

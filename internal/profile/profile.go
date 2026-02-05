@@ -15,8 +15,13 @@ func (p Profile) Start() {
 	fmt.Printf("\n--- IGNITING %s PROTOCOL ---\n", p.Name)
 
 	for _, app := range p.Apps {
+
 		fmt.Printf("[+] Launching %s...\n", app)
-		cmd := exec.Command("cmd", "/C", "start", "", app)
+		cmdName := app
+		if app == "Code.exe" {
+			cmdName = "code"
+		}
+		cmd := exec.Command("cmd", "/C", "start", "", cmdName)
 		cmd.Start()
 		time.Sleep(500 * time.Millisecond)
 	}

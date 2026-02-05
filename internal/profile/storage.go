@@ -26,7 +26,7 @@ func SaveProfile(p Profile) error {
 
 }
 
-func LoadProfile(name string) ([]string, error) {
+func LoadProfile(name string) (*Profile, error) {
 
 	filename := name + ".json"
 
@@ -45,6 +45,6 @@ func LoadProfile(name string) ([]string, error) {
 
 	}
 
-	return p.Apps, nil
+	return &p, nil
 
 }

@@ -34,6 +34,10 @@ func Capture() ([]string, error) {
 		appName := row[0]
 		windowsTitle := row[8]
 
+		if appName == "explorer.exe" || appName == "tasklist.exe" || appName == "svchost.exe" {
+			continue
+		}
+
 		if !strings.HasSuffix(appName, ".exe") {
 			continue
 		}

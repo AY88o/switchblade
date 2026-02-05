@@ -65,13 +65,13 @@ func main() {
 			fmt.Printf("Error Capturing: %v\n", err)
 		}
 
-		pureNoiseList, err := profile.LoadProfile("Noise")
+		pureNoiseListStruct, err := profile.LoadProfile("Noise")
 
 		if err != nil {
 			fmt.Println("Error, couldnt find the calibration file")
 		}
 
-		clearList := sys.Subtract(mixList, pureNoiseList)
+		clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
 
 		Aprofile := profile.Profile{
 			Name: profilname,
@@ -82,17 +82,23 @@ func main() {
 
 	}
 
-	// if command == "go" {
-	// 	if len(os.Args) < 3 {
-	// 		fmt.Println("Usage name:")
-	// 		fmt.Println("Enter the Saved state name")
-	// 		fmt.Println("switchblade go <name>")
+	if command == "go" {
+		if len(os.Args) < 3 {
+			fmt.Println("Usage:")
+			fmt.Println("switchblade go <name>..... open already saved state")
+			return
+		}
 
-	// 		return
-	// 	}
+		savedProfile := os.Args[3]
 
-	// 	stateName := os.Args[3]
+		savedProfileStruct, err := profile.LoadProfile(savedProfile)
 
-	// }
+		if err != nil {
+			fmt.Printf("Error loading Saved profile, Saved profile doesnt exits: %v", err)
+		}
+
+		savedProfileStruct.Start()
+
+	}
 
 }
