@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if command == "save" {
-		if len(os.Args) < 3 {
+		if len(os.Args) < 4 {
 			fmt.Println("Usage name:")
 			fmt.Println("Give the state a name:")
 			fmt.Println("switchblade save <name>")
@@ -57,19 +57,42 @@ func main() {
 
 		profilname := os.Args[3]
 
+		fmt.Println("Capturing...")
+
 		mixList, err := sys.Capture()
 
 		if err != nil {
 			fmt.Printf("Error Capturing: %v\n", err)
 		}
 
+		pureNoiseList, err := profile.LoadProfile("Noise")
+
+		if err != nil {
+			fmt.Println("Error, couldnt find the calibration file")
+		}
+
+		clearList := sys.Subtract(mixList, pureNoiseList)
+
 		Aprofile := profile.Profile{
 			Name: profilname,
-			Apps: mixList,
+			Apps: clearList,
 		}
 
 		err = profile.SaveProfile(Aprofile)
 
 	}
+
+	// if command == "go" {
+	// 	if len(os.Args) < 3 {
+	// 		fmt.Println("Usage name:")
+	// 		fmt.Println("Enter the Saved state name")
+	// 		fmt.Println("switchblade go <name>")
+
+	// 		return
+	// 	}
+
+	// 	stateName := os.Args[3]
+
+	// }
 
 }

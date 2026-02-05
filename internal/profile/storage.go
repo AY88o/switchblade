@@ -8,7 +8,7 @@ import (
 
 func SaveProfile(p Profile) error {
 
-	data, err1 := json.MarshalIndent(p.Apps, "", " ")
+	data, err1 := json.MarshalIndent(p, "", " ")
 
 	if err1 != nil {
 		return fmt.Errorf("couldn't freeze profile %w", err1)
