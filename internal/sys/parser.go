@@ -34,7 +34,12 @@ func Capture() ([]string, error) {
 		appName := row[0]
 		windowsTitle := row[8]
 
-		if appName == "explorer.exe" || appName == "tasklist.exe" || appName == "svchost.exe" {
+		if appName == "explorer.exe" ||
+			appName == "tasklist.exe" ||
+			appName == "svchost.exe" ||
+			appName == "cmd.exe" ||
+			appName == "WindowsTerminal.exe" ||
+			appName == "conhost.exe" {
 			continue
 		}
 

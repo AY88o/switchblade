@@ -1,0 +1,9 @@
+{
+ "Name": "code1",
+ "Apps": [
+  "vlc.exe",
+  "Code.exe",
+  "Telegram.exe",
+  "Microsoft.Media.Player.exe"
+ ]
+}

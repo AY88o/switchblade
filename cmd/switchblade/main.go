@@ -16,8 +16,10 @@ func main() {
 		fmt.Println("switchblade calibrate     ...(calibrate the tool)")
 		fmt.Println("OR")
 		fmt.Println("switchblade save <name>   ...........(Save state)")
-		fmt.Printf("switchblade go <name>      ...(open a saved state)")
-		fmt.Printf("switchblade go -k <name>   ...(kill the current state and open a saved state)")
+		fmt.Println("OR")
+		fmt.Println("switchblade go <name>      ...(open a saved state)")
+		fmt.Println("OR")
+		fmt.Println("switchblade go -k <name>   ...(kill the current state and open a saved state)")
 
 		return
 
@@ -30,6 +32,7 @@ func main() {
 		fmt.Println("Scanning system for noise...")
 
 		pureNoiseList, err := sys.Capture()
+		fmt.Printf("Caught %d ghost apps in the background\n", len(pureNoiseList))
 
 		if err != nil {
 			fmt.Printf("Error Capturing: %v\n", err)
@@ -41,17 +44,21 @@ func main() {
 			Apps: pureNoiseList,
 		}
 
+		fmt.Println("Recognising noise for future analysis")
+
 		err = profile.SaveProfile(baseProfile)
 		if err != nil {
 			fmt.Printf("Erorr Saving profile: %v\n", err)
 		}
 
+		fmt.Println("Calibration Done!")
+
 	}
 
 	if command == "save" {
 		if len(os.Args) < 4 {
-			fmt.Println("Usage name:")
-			fmt.Println("Give the state a name:")
+			fmt.Println("Usage:")
+			fmt.Println("Give the state a name...")
 			fmt.Println("switchblade save <name>")
 
 			return
@@ -67,6 +74,8 @@ func main() {
 			fmt.Printf("Error Capturing: %v\n", err)
 		}
 
+		fmt.Println("Filtering...")
+
 		pureNoiseListStruct, err := profile.LoadProfile("Noise")
 
 		if err != nil {
@@ -75,12 +84,15 @@ func main() {
 
 		clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
 
+		fmt.Println("Saving state...")
 		Aprofile := profile.Profile{
 			Name: profilname,
 			Apps: clearList,
 		}
 
 		err = profile.SaveProfile(Aprofile)
+
+		fmt.Printf("State Saved Successfully!")
 
 	}
 
@@ -101,7 +113,6 @@ func main() {
 			}
 
 			//killing current state
-
 			err := profile.CloseCurrentState()
 
 			if err != nil {

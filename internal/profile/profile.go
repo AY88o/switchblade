@@ -20,8 +20,8 @@ func (p Profile) Start() {
 
 		fmt.Printf("[+] Launching %s...\n", app)
 		cmdName := app
-		if app == "Code.exe" {
-			cmdName = "code"
+		if len(app) > 4 && app[len(app)-4:] == ".exe" {
+			cmdName = app[:len(app)-4]
 		}
 		cmd := exec.Command("cmd", "/C", "start", "", cmdName)
 		cmd.Start()
@@ -31,7 +31,7 @@ func (p Profile) Start() {
 
 func Kill(list []string) {
 
-	fmt.Printf("...Closing Current state...")
+	fmt.Printf("...Closing Current state...\n")
 
 	for _, app := range list {
 
@@ -41,13 +41,15 @@ func Kill(list []string) {
 
 	}
 
-	fmt.Printf("Kill succesful, closed %d apps", len(list))
+	fmt.Printf("Kill succesful, closed %d apps\n", len(list))
 
 }
 
 func CloseCurrentState() error {
 
+	fmt.Println("killing the Current state...")
 	//Capturing current state
+	fmt.Println("Capturing only to filter...")
 	CurrentStateList, err := sys.Capture()
 
 	//summoning prev noise to filter
@@ -59,10 +61,12 @@ func CloseCurrentState() error {
 	}
 
 	//filtering a clear list
+	fmt.Println("filtering to kill the state...")
 	clearList := sys.Subtract(CurrentStateList, pureNoiseListStruct.Apps)
 
 	//killing the state
 	Kill(clearList)
+	fmt.Println("State Killed Successfully...")
 
 	return nil
 
@@ -74,7 +78,7 @@ func OpenSavedState(stateName string) error {
 	savedProfileStruct, err := LoadProfile(stateName)
 
 	if err != nil {
-		fmt.Printf("Error loading Saved profile, Saved profile doesnt exits: %v", err)
+		fmt.Printf("Error loading Saved profile, Saved profile doesnt exits: %v\n", err)
 		return err
 	}
 
