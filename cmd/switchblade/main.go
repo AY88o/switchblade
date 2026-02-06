@@ -13,9 +13,11 @@ func main() {
 	if len(os.Args) < 2 {
 
 		fmt.Println("Usage:")
-		fmt.Println("switchblade calibrate  ....(calibrate the tool)")
+		fmt.Println("switchblade calibrate     ...(calibrate the tool)")
 		fmt.Println("OR")
-		fmt.Println("switchblade save <name>   ...(Save state)")
+		fmt.Println("switchblade save <name>   ...........(Save state)")
+		fmt.Printf("switchblade go <name>      ...(open a saved state)")
+		fmt.Printf("switchblade go -k <name>   ...(kill the current state and open a saved state)")
 
 		return
 
@@ -85,19 +87,48 @@ func main() {
 	if command == "go" {
 		if len(os.Args) < 3 {
 			fmt.Println("Usage:")
-			fmt.Println("switchblade go <name>..... open already saved state")
+			fmt.Println("switchblade go <name>  .....(open already saved state)")
+			fmt.Println("switchblade go -k <name> ...(open saved state and kill current state)")
 			return
 		}
 
-		savedProfile := os.Args[3]
+		if os.Args[3] == "-k" {
+			if len(os.Args) < 4 {
+				fmt.Println("Usage:")
+				fmt.Println("switchblade go -k <name>  ...(open saved state and kill current one)")
+				return
 
-		savedProfileStruct, err := profile.LoadProfile(savedProfile)
+			}
 
-		if err != nil {
-			fmt.Printf("Error loading Saved profile, Saved profile doesnt exits: %v", err)
+			//killing current state
+
+			err := profile.CloseCurrentState()
+
+			if err != nil {
+				fmt.Printf("couldn't kill the current state : %v", err)
+				return
+			}
+
+			//opening the saved state
+			savedProfileName := os.Args[4]
+
+			err2 := profile.OpenSavedState(savedProfileName)
+
+			if err2 != nil {
+				fmt.Printf("Error opening saved state %s", savedProfileName)
+				return
+			}
+
+		} else {
+			savedProfileName := os.Args[3]
+
+			err := profile.OpenSavedState(savedProfileName)
+
+			if err != nil {
+				fmt.Printf("Error opening saved state %s", savedProfileName)
+				return
+			}
 		}
-
-		savedProfileStruct.Start()
 
 	}
 
