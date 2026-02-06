@@ -3,6 +3,7 @@ package profile
 import (
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/AY88o/switchblade/internal/sys"
@@ -16,15 +17,14 @@ type Profile struct {
 func (p Profile) Start() {
 	fmt.Printf("\n--- IGNITING %s PROTOCOL ---\n", p.Name)
 
-	for _, app := range p.Apps {
+	for _, appPath := range p.Apps {
 
-		fmt.Printf("[+] Launching %s...\n", app)
-		cmdName := app
-		if len(app) > 4 && app[len(app)-4:] == ".exe" {
-			cmdName = app[:len(app)-4]
+		cmd := exec.Command("cmd", "/C", "start", "", appPath)
+		err := cmd.Start()
+
+		if err != nil {
+			fmt.Printf("Error starting the state %v", err)
 		}
-		cmd := exec.Command("cmd", "/C", "start", "", cmdName)
-		cmd.Start()
 		time.Sleep(500 * time.Millisecond)
 	}
 }
@@ -33,15 +33,22 @@ func Kill(list []string) {
 
 	fmt.Printf("...Closing Current state...\n")
 
-	for _, app := range list {
+	for _, appPath := range list {
 
-		cmd := exec.Command("taskkill", "/IM", app, "/F", "/T")
+		appName := filepath.Base(appPath)
 
-		cmd.Run()
+		if appName == "switchblade.exe" || appName == "main.exe" {
+			continue
+		}
+
+		cmd := exec.Command("taskkill", "/IM", appName, "/F", "/T")
+		err := cmd.Run()
+
+		if err != nil {
+			fmt.Printf("Error Killing the state %v", err)
+		}
 
 	}
-
-	fmt.Printf("Kill succesful, closed %d apps\n", len(list))
 
 }
 

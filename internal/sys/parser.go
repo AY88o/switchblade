@@ -1,67 +1,59 @@
 package sys
 
 import (
-	"encoding/csv"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
 func Capture() ([]string, error) {
 
-	cmd := exec.Command("tasklist", "/V", "/FO", "CSV", "/NH")
+	psCmd := `Get-Process | Where-Object {$_.MainWindowTitle -ne "" -and $_.Path -ne $null} | Select-Object -ExpandProperty Path`
+
+	cmd := exec.Command("powershell", "-Command", psCmd)
 	output, err := cmd.Output()
 
 	if err != nil {
-		fmt.Println("Error running tasklist:", err)
-		return nil, fmt.Errorf("Error running tasklist: %w", err)
+		fmt.Printf("powershell Error %v", err)
+		return nil, err
 	}
 
-	reader := csv.NewReader(strings.NewReader(string(output)))
+	lines := strings.Split(string(output), "\r\n")
 
-	records, err := reader.ReadAll()
+	seenAppPaths := make(map[string]bool)
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse tasklist output: %w", err)
-	}
+	for _, path := range lines {
+		//powershell may return whitespaces
+		path = strings.TrimSpace(path)
 
-	seenApps := make(map[string]bool)
+		//to not capture the switchblade or powershell/terminal itself
+		appName := filepath.Base(path)
 
-	for _, row := range records {
-		if len(row) < 9 {
+		//path.Trimspace is strict
+		if path == "" {
 			continue
 		}
-		appName := row[0]
-		windowsTitle := row[8]
 
-		if appName == "explorer.exe" ||
-			appName == "tasklist.exe" ||
-			appName == "svchost.exe" ||
-			appName == "cmd.exe" ||
+		if appName == "switchblade.exe" ||
+			appName == "main.exe" ||
 			appName == "WindowsTerminal.exe" ||
-			appName == "conhost.exe" {
+			appName == "cmd.exe" {
 			continue
 		}
 
-		if !strings.HasSuffix(appName, ".exe") {
-			continue
-		}
+		seenAppPaths[path] = true
 
-		if windowsTitle == "N/A" {
-			continue
-		}
-
-		seenApps[appName] = true
 	}
 
-	cleanList := make([]string, 0, len(seenApps))
-	// var cleanList []string
+	cleanListPaths := make([]string, 0, len(seenAppPaths))
 
-	for unique := range seenApps {
-		cleanList = append(cleanList, unique)
+	for paths := range seenAppPaths {
+		cleanListPaths = append(cleanListPaths, paths)
 	}
 
-	return cleanList, nil
+	return cleanListPaths, nil
+
 }
 
 func Subtract(mixList []string, pureNoiseList []string) []string {
