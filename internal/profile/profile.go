@@ -45,16 +45,15 @@ func Kill(list []string) {
 		err := cmd.Run()
 
 		if err != nil {
-			fmt.Printf("Error Killing the state %v", err)
+			fmt.Printf("Error Killing the state %v\n", err)
 		}
 
 	}
 
 }
 
-func CloseCurrentState() error {
+func CloseCurrentState(force bool, interactive bool) error {
 
-	fmt.Println("killing the Current state...")
 	//Capturing current state
 	fmt.Println("Capturing only to filter...")
 	CurrentStateList, err := sys.Capture()
@@ -71,9 +70,34 @@ func CloseCurrentState() error {
 	fmt.Println("filtering to kill the state...")
 	clearList := sys.Subtract(CurrentStateList, pureNoiseListStruct.Apps)
 
-	//killing the state
-	Kill(clearList)
-	fmt.Println("State Killed Successfully...")
+	if force {
+		//killing the state
+		Kill(clearList)
+		fmt.Println("State Killed Successfully...")
+
+	} else if interactive {
+		fmt.Println("Killing the state would terminate:")
+
+		for _, app := range clearList {
+			app = filepath.Base(app)
+			fmt.Println(app)
+		}
+
+		var Permission string
+		fmt.Println("Type y or Y to continue...")
+		fmt.Printf("Type n or N to abort the killing \nand continue the saved state...")
+
+		fmt.Scan(&Permission)
+
+		if Permission == "y" || Permission == "Y" {
+			//killing the state
+			Kill(clearList)
+			fmt.Println("State Killed Successfully...")
+
+		} else {
+			fmt.Println("Kill aborted...")
+		}
+	}
 
 	return nil
 

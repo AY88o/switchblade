@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/AY88o/switchblade/internal/profile"
 	"github.com/AY88o/switchblade/internal/sys"
@@ -59,7 +60,8 @@ func printHelp() {
 	fmt.Println("OR")
 	fmt.Println("switchblade go <name>      ...(open a saved state)")
 	fmt.Println("OR")
-	fmt.Println("switchblade go -k <name>   ...(kill the current state and open a saved state)")
+	fmt.Println("switchblade go -k <name>   ...(Permission to kill, open saved stat)")
+	fmt.Println("switchblade go -fk <name>   ....(force kill current state, open saved state)")
 }
 
 func runCalibrate() {
@@ -115,15 +117,24 @@ func runSave() {
 		fmt.Println("Error, couldnt find the calibration file")
 	}
 
+	fmt.Println("Saving state...")
 	clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
 
-	fmt.Println("Saving state...")
 	Aprofile := profile.Profile{
 		Name: profilname,
 		Apps: clearList,
 	}
 
 	err = profile.SaveProfile(Aprofile)
+	if err != nil {
+		fmt.Printf("Error Saving the state: %v", err)
+	}
+
+	fmt.Printf("State Name: %s\n", profilname)
+	for _, app := range clearList {
+		app = filepath.Base(app)
+		fmt.Println(app)
+	}
 
 	fmt.Printf("State Saved Successfully!")
 }
@@ -136,7 +147,7 @@ func runGoHelp() {
 	}
 }
 
-func runKillandSwitch() {
+func runKillandSwitch(force bool, interactive bool) {
 	if len(os.Args) < 4 {
 		fmt.Println("Usage:")
 		fmt.Println("switchblade go -k <name>  ...(open saved state and kill current one)")
@@ -145,7 +156,7 @@ func runKillandSwitch() {
 	}
 
 	//killing current state
-	err := profile.CloseCurrentState()
+	err := profile.CloseCurrentState(force, interactive)
 
 	if err != nil {
 		fmt.Printf("couldn't kill the current state : %v", err)
@@ -163,8 +174,8 @@ func runKillandSwitch() {
 	}
 }
 
-func runOpen() {
-	savedProfileName := os.Args[3]
+func runOpen(arg string) {
+	savedProfileName := arg
 
 	err := profile.OpenSavedState(savedProfileName)
 
@@ -181,11 +192,17 @@ func runGo() {
 		return
 	}
 
-	if os.Args[3] == "-k" {
+	flag := os.Args[3]
 
-		runKillandSwitch()
+	switch flag {
+	case "-fk":
+		runKillandSwitch(true, false)
 
-	} else {
-		runOpen()
+	case "-k":
+		runKillandSwitch(false, true)
+
+	default:
+		runOpen(flag)
 	}
+
 }
