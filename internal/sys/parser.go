@@ -38,12 +38,12 @@ func Capture() ([]string, error) {
 
 		if appName == "switchblade.exe" ||
 			appName == "main.exe" ||
-			appName == "WindowsTerminal.exe" ||
+			appName == "windowsterminal.exe" ||
 			appName == "cmd.exe" ||
 			appName == "explorer.exe" ||
-			appName == "ApplicationFrameHost.exe" ||
-			appName == "SearchHost.exe" ||
-			appName == "StartMenuExperienceHost.exe" {
+			appName == "applicationframehost.exe" ||
+			appName == "searchHost.exe" ||
+			appName == "startmenuexperiencehost.exe" {
 			continue
 		}
 
