@@ -8,18 +8,21 @@ import (
 	"github.com/AY88o/switchblade/internal/sys"
 )
 
+func handlePanic() {
+	if r := recover(); r != nil {
+		fmt.Println("Something went wrong!")
+		fmt.Printf("Error: %v\n", r)
+		fmt.Println("Check command syntax and try again.")
+	}
+}
+
 func main() {
+
+	defer handlePanic()
 
 	if len(os.Args) < 2 {
 
-		fmt.Println("Usage:")
-		fmt.Println("switchblade calibrate     ...(calibrate the tool)")
-		fmt.Println("OR")
-		fmt.Println("switchblade save <name>   ...........(Save state)")
-		fmt.Println("OR")
-		fmt.Println("switchblade go <name>      ...(open a saved state)")
-		fmt.Println("OR")
-		fmt.Println("switchblade go -k <name>   ...(kill the current state and open a saved state)")
+		printHelp()
 
 		return
 
@@ -29,118 +32,154 @@ func main() {
 
 	if command == "calibrate" {
 
-		fmt.Println("Scanning system for noise...")
-
-		pureNoiseList, err := sys.Capture()
-		fmt.Printf("Caught %d ghost apps in the background\n", len(pureNoiseList))
-
-		if err != nil {
-			fmt.Printf("Error Capturing: %v\n", err)
-		}
-
-		baseProfile := profile.Profile{
-
-			Name: "Noise",
-			Apps: pureNoiseList,
-		}
-
-		fmt.Println("Recognising noise for future analysis")
-
-		err = profile.SaveProfile(baseProfile)
-		if err != nil {
-			fmt.Printf("Erorr Saving profile: %v\n", err)
-		}
-
-		fmt.Println("Calibration Done!")
+		runCalibrate()
 
 	}
 
 	if command == "save" {
-		if len(os.Args) < 4 {
-			fmt.Println("Usage:")
-			fmt.Println("Give the state a name...")
-			fmt.Println("switchblade save <name>")
 
-			return
-		}
-
-		profilname := os.Args[3]
-
-		fmt.Println("Capturing...")
-
-		mixList, err := sys.Capture()
-
-		if err != nil {
-			fmt.Printf("Error Capturing: %v\n", err)
-		}
-
-		fmt.Println("Filtering...")
-
-		pureNoiseListStruct, err := profile.LoadProfile("Noise")
-
-		if err != nil {
-			fmt.Println("Error, couldnt find the calibration file")
-		}
-
-		clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
-
-		fmt.Println("Saving state...")
-		Aprofile := profile.Profile{
-			Name: profilname,
-			Apps: clearList,
-		}
-
-		err = profile.SaveProfile(Aprofile)
-
-		fmt.Printf("State Saved Successfully!")
+		runSave()
 
 	}
 
 	if command == "go" {
+
 		if len(os.Args) < 3 {
-			fmt.Println("Usage:")
-			fmt.Println("switchblade go <name>  .....(open already saved state)")
-			fmt.Println("switchblade go -k <name> ...(open saved state and kill current state)")
+			runGoHelp()
 			return
 		}
 
 		if os.Args[3] == "-k" {
-			if len(os.Args) < 4 {
-				fmt.Println("Usage:")
-				fmt.Println("switchblade go -k <name>  ...(open saved state and kill current one)")
-				return
 
-			}
-
-			//killing current state
-			err := profile.CloseCurrentState()
-
-			if err != nil {
-				fmt.Printf("couldn't kill the current state : %v", err)
-				return
-			}
-
-			//opening the saved state
-			savedProfileName := os.Args[4]
-
-			err2 := profile.OpenSavedState(savedProfileName)
-
-			if err2 != nil {
-				fmt.Printf("Error opening saved state %s", savedProfileName)
-				return
-			}
+			runKillandSwitch()
 
 		} else {
-			savedProfileName := os.Args[3]
-
-			err := profile.OpenSavedState(savedProfileName)
-
-			if err != nil {
-				fmt.Printf("Error opening saved state %s", savedProfileName)
-				return
-			}
+			runOpen()
 		}
 
 	}
 
+}
+
+func printHelp() {
+	fmt.Println("Usage:")
+	fmt.Println("switchblade calibrate     ...(calibrate the tool)")
+	fmt.Println("OR")
+	fmt.Println("switchblade save <name>   ...........(Save state)")
+	fmt.Println("OR")
+	fmt.Println("switchblade go <name>      ...(open a saved state)")
+	fmt.Println("OR")
+	fmt.Println("switchblade go -k <name>   ...(kill the current state and open a saved state)")
+}
+
+func runCalibrate() {
+	fmt.Println("Scanning system for noise...")
+
+	pureNoiseList, err := sys.Capture()
+	fmt.Printf("Caught %d ghost apps in the background\n", len(pureNoiseList))
+
+	if err != nil {
+		fmt.Printf("Error Capturing: %v\n", err)
+	}
+
+	baseProfile := profile.Profile{
+
+		Name: "Noise",
+		Apps: pureNoiseList,
+	}
+
+	fmt.Println("Recognising noise for future analysis")
+
+	err = profile.SaveProfile(baseProfile)
+	if err != nil {
+		fmt.Printf("Erorr Saving profile: %v\n", err)
+	}
+
+	fmt.Println("Calibration Done!")
+}
+
+func runSave() {
+	if len(os.Args) < 4 {
+		fmt.Println("Usage:")
+		fmt.Println("Give the state a name...")
+		fmt.Println("switchblade save <name>")
+
+		return
+	}
+
+	profilname := os.Args[3]
+
+	fmt.Println("Capturing...")
+
+	mixList, err := sys.Capture()
+
+	if err != nil {
+		fmt.Printf("Error Capturing: %v\n", err)
+	}
+
+	fmt.Println("Filtering...")
+
+	pureNoiseListStruct, err := profile.LoadProfile("Noise")
+
+	if err != nil {
+		fmt.Println("Error, couldnt find the calibration file")
+	}
+
+	clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
+
+	fmt.Println("Saving state...")
+	Aprofile := profile.Profile{
+		Name: profilname,
+		Apps: clearList,
+	}
+
+	err = profile.SaveProfile(Aprofile)
+
+	fmt.Printf("State Saved Successfully!")
+}
+
+func runGoHelp() {
+	if len(os.Args) < 3 {
+		fmt.Println("Usage:")
+		fmt.Println("switchblade go <name>  .....(open already saved state)")
+		fmt.Println("switchblade go -k <name> ...(open saved state and kill current state)")
+	}
+}
+
+func runKillandSwitch() {
+	if len(os.Args) < 4 {
+		fmt.Println("Usage:")
+		fmt.Println("switchblade go -k <name>  ...(open saved state and kill current one)")
+		return
+
+	}
+
+	//killing current state
+	err := profile.CloseCurrentState()
+
+	if err != nil {
+		fmt.Printf("couldn't kill the current state : %v", err)
+		return
+	}
+
+	//opening the saved state
+	savedProfileName := os.Args[4]
+
+	err2 := profile.OpenSavedState(savedProfileName)
+
+	if err2 != nil {
+		fmt.Printf("Error opening saved state %s", savedProfileName)
+		return
+	}
+}
+
+func runOpen() {
+	savedProfileName := os.Args[3]
+
+	err := profile.OpenSavedState(savedProfileName)
+
+	if err != nil {
+		fmt.Printf("Error opening saved state %s", savedProfileName)
+		return
+	}
 }

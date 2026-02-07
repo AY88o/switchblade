@@ -15,7 +15,7 @@ type Profile struct {
 }
 
 func (p Profile) Start() {
-	fmt.Printf("\n--- IGNITING %s PROTOCOL ---\n", p.Name)
+	fmt.Printf("IGNITING %s PROTOCOL ---\n", p.Name)
 
 	for _, appPath := range p.Apps {
 

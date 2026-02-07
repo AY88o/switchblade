@@ -1,0 +1,9 @@
+# Ignore user profiles (JSON)
+*.json
+
+# Ignore compiled binaries (EXEs)
+*.exe
+*.dll
+
+# Ignore VS Code settings 
+.vscode/
