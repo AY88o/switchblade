@@ -26,6 +26,7 @@ func Capture() ([]string, error) {
 	for _, path := range lines {
 		//powershell may return whitespaces
 		path = strings.TrimSpace(path)
+		path = strings.ToLower(path)
 
 		//to not capture the switchblade or powershell/terminal itself
 		appName := filepath.Base(path)
@@ -38,7 +39,11 @@ func Capture() ([]string, error) {
 		if appName == "switchblade.exe" ||
 			appName == "main.exe" ||
 			appName == "WindowsTerminal.exe" ||
-			appName == "cmd.exe" {
+			appName == "cmd.exe" ||
+			appName == "explorer.exe" ||
+			appName == "ApplicationFrameHost.exe" ||
+			appName == "SearchHost.exe" ||
+			appName == "StartMenuExperienceHost.exe" {
 			continue
 		}
 

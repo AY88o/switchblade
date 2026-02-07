@@ -30,33 +30,23 @@ func main() {
 
 	command := os.Args[2]
 
-	if command == "calibrate" {
+	switch command {
 
+	case "calibrate":
 		runCalibrate()
 
-	}
-
-	if command == "save" {
-
+	case "save":
 		runSave()
 
-	}
+	case "go":
+		runGo()
 
-	if command == "go" {
+	case "help":
+		printHelp()
 
-		if len(os.Args) < 3 {
-			runGoHelp()
-			return
-		}
-
-		if os.Args[3] == "-k" {
-
-			runKillandSwitch()
-
-		} else {
-			runOpen()
-		}
-
+	default:
+		fmt.Printf("Uknown command: %s\n", command)
+		printHelp()
 	}
 
 }
@@ -181,5 +171,21 @@ func runOpen() {
 	if err != nil {
 		fmt.Printf("Error opening saved state %s", savedProfileName)
 		return
+	}
+}
+
+func runGo() {
+
+	if len(os.Args) < 3 {
+		runGoHelp()
+		return
+	}
+
+	if os.Args[3] == "-k" {
+
+		runKillandSwitch()
+
+	} else {
+		runOpen()
 	}
 }
