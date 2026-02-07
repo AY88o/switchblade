@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/AY88o/switchblade/internal/sys"
@@ -15,7 +16,6 @@ type Profile struct {
 }
 
 func (p Profile) Start() {
-	fmt.Printf("IGNITING %s PROTOCOL ---\n", p.Name)
 
 	for _, appPath := range p.Apps {
 
@@ -30,8 +30,11 @@ func (p Profile) Start() {
 }
 
 func Kill(list []string) {
+	fmt.Println("")
 
-	fmt.Printf("...Closing Current state...\n")
+	fmt.Printf("CLOSING THE CURRENT STATE...\n")
+
+	fmt.Println("")
 
 	for _, appPath := range list {
 
@@ -54,8 +57,6 @@ func Kill(list []string) {
 
 func CloseCurrentState(force bool, interactive bool) error {
 
-	//Capturing current state
-	fmt.Println("Capturing only to filter...")
 	CurrentStateList, err := sys.Capture()
 
 	//summoning prev noise to filter
@@ -66,8 +67,6 @@ func CloseCurrentState(force bool, interactive bool) error {
 		return err
 	}
 
-	//filtering a clear list
-	fmt.Println("filtering to kill the state...")
 	clearList := sys.Subtract(CurrentStateList, pureNoiseListStruct.Apps)
 
 	if force {
@@ -76,26 +75,37 @@ func CloseCurrentState(force bool, interactive bool) error {
 		fmt.Println("State Killed Successfully...")
 
 	} else if interactive {
-		fmt.Println("Killing the state would terminate:")
+		fmt.Println("")
+		fmt.Printf("  %-25s\n", "INTERACTIVE KILL MODE")
+		fmt.Println("-----------------------")
+		fmt.Println("The following apps will be terminated:")
 
 		for _, app := range clearList {
 			app = filepath.Base(app)
-			fmt.Println(app)
+			app = strings.TrimSuffix(app, ".exe")
+			fmt.Printf("  - %s\n", app)
 		}
 
+		fmt.Println("")
+
 		var Permission string
-		fmt.Println("Type y or Y to continue...")
-		fmt.Printf("Type n or N to abort the killing \nand continue the saved state...")
+		fmt.Println("")
+		fmt.Println("Are you sure you want to continue?")
+		fmt.Print(" [Y] Yes, kill them   [N] No, abort > ")
 
 		fmt.Scan(&Permission)
 
 		if Permission == "y" || Permission == "Y" {
 			//killing the state
 			Kill(clearList)
+			fmt.Println("")
 			fmt.Println("State Killed Successfully...")
+			fmt.Println("")
 
 		} else {
+			fmt.Println("")
 			fmt.Println("Kill aborted...")
+			fmt.Println("")
 		}
 	}
 
@@ -105,7 +115,10 @@ func CloseCurrentState(force bool, interactive bool) error {
 
 func OpenSavedState(stateName string) error {
 
-	fmt.Printf("Loading the saved state %s ...\n", stateName)
+	fmt.Println("")
+
+	fmt.Printf("LOADING THE SAVED STATE %s\n", stateName)
+	fmt.Println("")
 	savedProfileStruct, err := LoadProfile(stateName)
 
 	if err != nil {
@@ -114,7 +127,9 @@ func OpenSavedState(stateName string) error {
 	}
 
 	savedProfileStruct.Start()
+
 	fmt.Println("Success loading the state!")
+	fmt.Println("")
 	return nil
 
 }
