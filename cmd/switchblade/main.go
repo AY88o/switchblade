@@ -29,7 +29,7 @@ func main() {
 
 	}
 
-	command := os.Args[2]
+	command := os.Args[1]
 
 	switch command {
 
@@ -91,7 +91,7 @@ func runCalibrate() {
 }
 
 func runSave() {
-	if len(os.Args) < 4 {
+	if len(os.Args) < 3 {
 		fmt.Println("Usage:")
 		fmt.Println("Give the state a name...")
 		fmt.Println("switchblade save <name>")
@@ -99,7 +99,7 @@ func runSave() {
 		return
 	}
 
-	profilname := os.Args[3]
+	profilname := os.Args[2]
 
 	fmt.Println("Capturing...")
 
@@ -164,7 +164,7 @@ func runKillandSwitch(force bool, interactive bool) {
 	}
 
 	//opening the saved state
-	savedProfileName := os.Args[4]
+	savedProfileName := os.Args[3]
 
 	err2 := profile.OpenSavedState(savedProfileName)
 
@@ -192,7 +192,7 @@ func runGo() {
 		return
 	}
 
-	flag := os.Args[3]
+	flag := os.Args[2]
 
 	switch flag {
 	case "-fk":
