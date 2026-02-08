@@ -21,6 +21,11 @@ Switchblade is a lightweight CLI tool written in Go that lets you snapshot your 
 
 That's it! Open a **new** terminal and type `switchblade help` to verify.
 
+> ⚠️ **IMPORTANT:** Do not run Switchblade from `C:\Windows\System32`.
+> If you open a terminal as Administrator, it often starts there by default. Windows prevents programs from writing files to System32, so your profiles won't save.
+>
+> **Fix:** simply type `cd $HOME` or move to a normal folder (like Desktop or Documents) before running commands.
+
 <details>
 <summary><strong>Troubleshooting: "Command Not Found"</strong></summary>
 
