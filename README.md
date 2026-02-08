@@ -21,6 +21,18 @@ Switchblade is a lightweight CLI tool written in Go that lets you snapshot your 
 
 That's it! Open a **new** terminal and type `switchblade help` to verify.
 
+<details>
+<summary><strong>Troubleshooting: "Command Not Found"</strong></summary>
+
+If the `switchblade` command doesn't work after running the installer:
+
+1. Search Windows for **"Edit the system environment variables"**.
+2. Click **Environment Variables** > **Path** > **Edit**.
+3. Click **New** and paste: `C:\Program Files\Switchblade`
+4. Click **OK** and restart your terminal.
+
+</details>
+
 ---
 
 ## ⚡ Getting Started (Critical Step!)
@@ -77,6 +89,35 @@ switchblade save coding
 - [ ] **v2.0:** Window Layouts (Future)
 
 ---
+
+## 🛠️ Troubleshooting
+
+<details>
+<summary><strong>⚠️ "Virus Detected" or Installation Blocked</strong></summary>
+
+Because Switchblade is a new open-source tool, Windows Defender acts cautiously.
+1. Go to **Windows Security** > **Virus & threat protection**.
+2. Click **Protection history**.
+3. Find the "Threat blocked" item (Switchblade), click **Actions**, and select **Allow on device**.
+4. Redownload the zip file.
+</details>
+
+<details>
+<summary><strong>🚫 "Command Not Found" (Manual Install)</strong></summary>
+
+If the installer script fails to set the path automatically:
+1. Create a folder at `C:\Program Files\Switchblade`.
+2. Manually move `switchblade.exe` into that folder.
+3. Add `C:\Program Files\Switchblade` to your **System Environment Variables (Path)**.
+4. Restart your terminal.
+</details>
+
+<details>
+<summary><strong>📂 `ls` command shows too many files?</strong></summary>
+
+Switchblade scans the current directory for profile files. If you run it from your Desktop, it might see *everything*.
+* **Tip:** Create a dedicated folder (e.g., `Documents\Switchblade`) and save your profiles there to keep your `ls` output clean.
+</details>
 
 ## 📄 License
 MIT License. Built with ❤️ in Go.
