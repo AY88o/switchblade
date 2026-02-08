@@ -126,13 +126,21 @@ func runSave() {
 		fmt.Printf("Error Capturing: %v\n", err)
 	}
 
+	var noiseApps []string
+
 	pureNoiseListStruct, err := profile.LoadProfile("Noise")
 
 	if err != nil {
-		fmt.Println("Error, couldnt find the calibration file")
+
+		fmt.Println("⚠️  Warning: Calibration file not found (Zero Noise Mode).")
+		fmt.Println("   Saving profile with ALL currently running apps.")
+		noiseApps = []string{} // Empty list
+	} else {
+
+		noiseApps = pureNoiseListStruct.Apps
 	}
 
-	clearList := sys.Subtract(mixList, pureNoiseListStruct.Apps)
+	clearList := sys.Subtract(mixList, noiseApps)
 
 	Aprofile := profile.Profile{
 		Name: profilname,
