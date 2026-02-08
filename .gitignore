@@ -1,5 +1,7 @@
 # Ignore user profiles (JSON)
 *.json
+*.switchblade
+
 
 # Ignore compiled binaries (EXEs)
 *.exe

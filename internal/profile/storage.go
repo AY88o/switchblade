@@ -14,7 +14,7 @@ func SaveProfile(p Profile) error {
 		return fmt.Errorf("couldn't freeze profile %w", err1)
 	}
 
-	filename := p.Name + ".json"
+	filename := p.Name + ".switchblade"
 
 	err2 := os.WriteFile(filename, data, 0644)
 
@@ -28,7 +28,7 @@ func SaveProfile(p Profile) error {
 
 func LoadProfile(name string) (*Profile, error) {
 
-	filename := name + ".json"
+	filename := name + ".switchblade"
 
 	data, err := os.ReadFile(filename)
 	if err != nil {

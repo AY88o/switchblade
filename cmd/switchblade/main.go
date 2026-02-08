@@ -262,7 +262,7 @@ func runList() {
 }
 
 func PrintAllStates() {
-	files, err := filepath.Glob("*.json")
+	files, err := filepath.Glob("*.switchblade")
 
 	if err != nil {
 		fmt.Printf(" Error listing files : %v", err)
@@ -275,11 +275,11 @@ func PrintAllStates() {
 
 	for _, file := range files {
 
-		if file == "Noise.json" {
+		if file == "Noise.switchblade" {
 			continue
 		}
 
-		file = strings.TrimSuffix(file, ".json")
+		file = strings.TrimSuffix(file, ".switchblade")
 
 		fmt.Printf("%s\n", file)
 	}

@@ -84,7 +84,7 @@ func Subtract(mixList []string, pureNoiseList []string) []string {
 
 func DeleteProfile(name string) error {
 
-	filename := name + ".json"
+	filename := name + ".switchblade"
 
 	_, err := os.Stat(filename)
 
