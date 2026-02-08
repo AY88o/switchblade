@@ -49,6 +49,9 @@ func main() {
 	case "list", "ls":
 		runList()
 
+	case "delete", "del":
+		runDelete()
+
 	default:
 		fmt.Printf("Uknown command: %s\n", command)
 		printHelp()
@@ -68,6 +71,7 @@ func printHelp() {
 	fmt.Printf("  %-25s %s\n", "calibrate", "Scan system to learn background noise")
 	fmt.Printf("  %-25s %s\n", "save <name>", "Save currently running apps as a profile")
 	fmt.Printf("  %-25s %s\n", "ls", "List all saved profiles")
+	fmt.Printf("  %-25s %s\n", "del or delete", "delete a saved profile")
 	fmt.Println("")
 
 	fmt.Println("Action Commands:")
@@ -270,5 +274,22 @@ func PrintAllStates() {
 		file = strings.TrimSuffix(file, ".json")
 
 		fmt.Printf("%s\n", file)
+	}
+}
+
+func runDelete() {
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: switchblade delete <name>")
+		return
+	}
+
+	ProfileName := os.Args[2]
+
+	err := sys.DeleteProfile(ProfileName)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Println("Profile Deleted Successfully!")
 	}
 }

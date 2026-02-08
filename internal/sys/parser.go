@@ -2,6 +2,7 @@ package sys
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -79,4 +80,23 @@ func Subtract(mixList []string, pureNoiseList []string) []string {
 	}
 
 	return cleanList
+}
+
+func DeleteProfile(name string) error {
+
+	filename := name + ".json"
+
+	_, err := os.Stat(filename)
+
+	if os.IsNotExist(err) {
+		return fmt.Errorf("profile '%s' does not exist", name)
+	}
+
+	err2 := os.Remove(filename)
+
+	if err2 != nil {
+		return err
+	}
+
+	return nil
 }
