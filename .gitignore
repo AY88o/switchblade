@@ -7,3 +7,8 @@
 
 # Ignore VS Code settings 
 .vscode/
+
+#zip
+*.zip
+
+!install.bat
