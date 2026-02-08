@@ -60,7 +60,7 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("\nSWITCHBLADE v1.3")
+	fmt.Println("\nSWITCHBLADE v1.4")
 	fmt.Println("----------------")
 	fmt.Println("Usage:")
 	fmt.Println("  switchblade <command> [arguments]")
